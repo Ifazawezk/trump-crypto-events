@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from .http import Client
-from .stats import benjamini_hochberg
+from .stats import benjamini_hochberg, placebo_pool
 
 BLOCKSCOUT = "https://eth.blockscout.com/api/v2/addresses/{a}/token-transfers"
 # Token contracts as published by their issuers. Everything else (mostly
@@ -122,10 +122,12 @@ def event_flows(daily: pd.DataFrame, event_days, pre=(-7, -1), post=(0, 6)) -> p
 
 
 def flow_placebo(daily: pd.DataFrame, days: list[pd.Timestamp], n_sets: int,
-                 rng: np.random.Generator, post=(0, 6)) -> dict:
+                 rng: np.random.Generator, post=(0, 6),
+                 buffer: pd.Timedelta = pd.Timedelta(days=10)) -> dict:
     """Mean gross flow (in + out) in the post window across events, compared
     with the same statistic on random sets of same-weekday dates from the
-    address's active span."""
+    address's active span. As in the price tests, dates within `buffer` of
+    any event are not drawn, so an event's own flows don't count as noise."""
     gross = (daily["inflow"] + daily["outflow"])
     roll = gross[::-1].rolling(post[1] - post[0] + 1, min_periods=1).sum()[::-1]
     roll = roll.iloc[: len(roll) - post[1]] if post[1] > 0 else roll
@@ -136,8 +138,12 @@ def flow_placebo(daily: pd.DataFrame, days: list[pd.Timestamp], n_sets: int,
     if len(obs) == 0 or len(roll) < 30:
         return {"n": 0, "mean": np.nan, "p": np.nan, "placebo_mean": np.nan}
     vals = roll.to_numpy(float)
-    draws = np.column_stack([rng.choice(np.flatnonzero(roll.index.day_of_week == t.day_of_week), n_sets)
-                             for t in days if t in roll.index])
+    pool = placebo_pool(roll.index, vals, days, buffer)
+    weekday = roll.index.day_of_week[pool]
+    choices = [pool[weekday == t.day_of_week] for t in days if t in roll.index]
+    if any(len(c) == 0 for c in choices):
+        return {"n": 0, "mean": np.nan, "p": np.nan, "placebo_mean": np.nan}
+    draws = np.column_stack([rng.choice(c, n_sets) for c in choices])
     null = vals[draws].mean(axis=1)
     p = (1 + np.sum(null >= obs.mean())) / (n_sets + 1)  # one-sided: unusually large flow
     return {"n": len(obs), "mean": obs.mean(), "p": p, "placebo_mean": null.mean(),
