@@ -129,6 +129,8 @@ def flow_placebo(daily: pd.DataFrame, days: list[pd.Timestamp], n_sets: int,
     gross = (daily["inflow"] + daily["outflow"])
     roll = gross[::-1].rolling(post[1] - post[0] + 1, min_periods=1).sum()[::-1]
     roll = roll.iloc[: len(roll) - post[1]] if post[1] > 0 else roll
+    # Same eligibility as event_flows: a full week of history before day 0.
+    roll = roll.loc[roll.index.min() + pd.Timedelta(days=7):]
     obs = np.array([roll.get(t, np.nan) for t in days], float)
     obs = obs[np.isfinite(obs)]
     if len(obs) == 0 or len(roll) < 30:

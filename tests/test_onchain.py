@@ -63,3 +63,10 @@ def test_flow_placebo_flags_big_flows():
         daily.loc[d, "inflow"] = 100.0
     res = onchain.flow_placebo(daily, days, 1000, np.random.default_rng(0))
     assert res["n"] == 3 and res["p"] < 0.05 and res["ratio"] > 2
+
+
+def test_flow_placebo_skips_events_in_first_week():
+    idx = pd.date_range("2025-01-01", periods=200, freq="D")
+    daily = pd.DataFrame({"inflow": 1.0, "outflow": 0.0}, index=idx)
+    res = onchain.flow_placebo(daily, [idx[3], idx[100]], 500, np.random.default_rng(0))
+    assert res["n"] == 1
