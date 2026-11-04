@@ -1,0 +1,7 @@
+# downloaded data (prices are CC BY-NC-SA, tweets and chain data are re-fetched)
+cache/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/
+build/

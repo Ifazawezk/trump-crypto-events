@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trump-crypto-events"
+version = "0.1.0"
+description = "Event study of crypto prices and attributed on-chain flows around Donald Trump's crypto-related posts and official actions"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Mohaned Elhagar" }]
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26", "pandas>=2.1", "matplotlib>=3.8", "requests>=2.31"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+cryptoevents = "cryptoevents.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
