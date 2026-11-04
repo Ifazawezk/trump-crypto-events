@@ -8,6 +8,7 @@ import matplotlib
 
 matplotlib.use("Agg")  # files only, never a window
 import matplotlib.pyplot as plt  # noqa: E402
+from matplotlib.ticker import EngFormatter  # noqa: E402
 import pandas as pd  # noqa: E402
 
 BLUE, ORANGE, AQUA, GREY, INK, MUTED = "#2a78d6", "#eb6834", "#1baf7a", "#b9b8b2", "#0b0b0b", "#52514e"
@@ -72,7 +73,8 @@ def chart_events(per_event: pd.DataFrame, series: str, window: str, out: Path):
     ax.set_title(f"{series} CAR {window} by event (percent)", loc="left", fontsize=11, color=INK)
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
-    ax.legend(frameon=False, fontsize=8, loc="lower right")
+    ax.legend(frameon=False, fontsize=8, loc="upper center", bbox_to_anchor=(0.4, -0.04 - 1 / len(d)),
+              ncol=2)
     fig.tight_layout()
     fig.savefig(out, dpi=150)
     plt.close(fig)
@@ -91,6 +93,7 @@ def chart_flows(flows: dict[str, pd.DataFrame], event_days, out: Path):
             if weekly.index.min() <= t <= weekly.index.max():
                 ax.axvline(t, color=ORANGE, linewidth=0.8, alpha=0.8)
         ax.set_title(k, loc="left", fontsize=9, color=INK)
+        ax.yaxis.set_major_formatter(EngFormatter(sep=" "))
         for s in ("top", "right"):
             ax.spines[s].set_visible(False)
         ax.tick_params(labelsize=7, colors=MUTED)

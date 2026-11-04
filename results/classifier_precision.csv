@@ -1,0 +1,5 @@
+corpus,rule,labelled,predicted,correct,precision,recall_in_labelled
+federal register,API search hit,14,14,4,0.286,1.0
+federal register,keyword rule,14,3,3,1.0,0.75
+tweets,substring baseline,54,54,2,0.037,1.0
+tweets,keyword rule,54,2,2,1.0,1.0

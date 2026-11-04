@@ -1,0 +1,17 @@
+address_label,token,counterparty,share_of_volume
+WLFI staking contract,WLFI,contract,0.1221
+WLFI staking contract,WLFI,other address,0.8779
+WLFI staking contract,USD1,contract,1.0
+WLFI CCIP lock and release pool,WLFI,contract,0.0141
+WLFI CCIP lock and release pool,WLFI,other address,0.9859
+WLFI token contract,USD1,contract,0.8722
+WLFI token contract,USD1,other address,0.1278
+WLFI token contract,USDC,contract,0.7858
+WLFI token contract,USDC,other address,0.2142
+WLFI token contract,USDT,contract,0.0004
+WLFI token contract,USDT,other address,0.9996
+Wallet labelled as Donald Trump's by Arkham Intelligence,WETH,contract,1.0
+Wallet labelled as Donald Trump's by Arkham Intelligence,USDC,contract,0.0143
+Wallet labelled as Donald Trump's by Arkham Intelligence,USDC,other address,0.9857
+Wallet labelled as Donald Trump's by Arkham Intelligence,USDT,contract,0.8334
+Wallet labelled as Donald Trump's by Arkham Intelligence,USDT,other address,0.1666
