@@ -37,12 +37,12 @@ Other checks, all in `results/`:
 
 | Address | Token | Transfers | Events in span | Mean flow in the week from day 0 | Same on random dates | p |
 |---|---|---|---|---|---|---|
-| WLFI CCIP lock and release pool | WLFI | 1,491 | 2 | 92.7M | 29.4M | 0.13 |
-| WLFI token contract | USDT | 35 | 13 | 332 | 73 | 0.03 (q 0.07) |
+| WLFI CCIP lock and release pool | WLFI | 1,491 | 2 | 92.7M | 29.9M | 0.11 |
+| WLFI token contract | USDT | 35 | 13 | 332 | 32 | 0.0015 (q 0.003) |
 | WLFI staking contract | WLFI | 1,061 | 0 | | | |
 | Arkham-labelled wallet | USDC | 99 | 0 | | | |
 
-The staking contract has only been active since 1 October 2026, and the labelled wallet's Ethereum stablecoin transfers all fall in May to July 2024, so neither overlaps an event. The USDT row is small transfers (5,214 USDT in total) sent to the token contract address itself. The vester contract is listed but not read (about 125,000 transfers, too many to page through politely on a free API), and the $TRUMP mint on Solana is listed but not read because the official site publishes no wallet addresses.
+The staking contract has only been active since 1 October 2026, and the labelled wallet's Ethereum stablecoin transfers all fall in May to July 2024, so neither overlaps an event. The USDT row is small transfers (5,214 USDT in total) sent to the token contract address itself. Its q stays small, but it rests on 35 transfers and says when they happened, not why. The vester contract is listed but not read (about 125,000 transfers, too many to page through politely on a free API), and the $TRUMP mint on Solana is listed but not read because the official site publishes no wallet addresses.
 
 ## How to run
 
@@ -74,7 +74,7 @@ The code is MIT licensed.
 - The market proxy is an equal-weight index of ten large coins on Binance (BTC, ETH, BNB, XRP, ADA, SOL, DOGE, LTC, LINK, TRX). Equal weights stop BTC from dominating the benchmark, and market caps are not available without a key. Each coin gets a market model against the index of the other nine, fitted on days -250 to -31. The index itself uses a constant-mean model, so its CAR is the market-wide move.
 - CARs cover days -5 to -1 (a leakage check), 0, 0 to +1, -1 to +1 and 0 to +3. Hourly windows run from 6 hours before to 24 hours after.
 - Significance comes from placebo dates at least 10 days from any event: one test draws any date, the other holds the weekday (and hour, for hourly) fixed within a year of each event. Intervals bootstrap the events. Benjamini-Hochberg corrects across coins and windows, and separately across the per-event tests (up to 490).
-- On-chain, the test statistic is gross flow (in plus out) over days 0 to +6, compared one-sided with same-weekday random dates in the address's active span. An event counts only after the address's first week.
+- On-chain, the test statistic is gross flow (in plus out) over days 0 to +6, compared one-sided with same-weekday random dates in the address's active span, at least 10 days from any event as in the price tests. An event counts only after the address's first week.
 - Events within 3 days of each other, or within 2 days of an item in `data/confounders.csv`, are flagged, and the pooled tests are rerun without them.
 
 ## Limits
