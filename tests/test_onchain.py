@@ -70,3 +70,17 @@ def test_flow_placebo_skips_events_in_first_week():
     daily = pd.DataFrame({"inflow": 1.0, "outflow": 0.0}, index=idx)
     res = onchain.flow_placebo(daily, [idx[3], idx[100]], 500, np.random.default_rng(0))
     assert res["n"] == 1
+
+
+def test_flow_placebo_keeps_event_weeks_out_of_the_null():
+    # One unit a day, plus a burst on each event day. A random date within a
+    # week of an event would pick up its burst, so the null has to leave those
+    # dates out, as the price tests do.
+    idx = pd.date_range("2025-01-01", periods=300, freq="D")
+    daily = pd.DataFrame({"inflow": 1.0, "outflow": 0.0}, index=idx)
+    days = [idx[60], idx[150], idx[240]]
+    for d in days:
+        daily.loc[d, "inflow"] = 1000.0
+    res = onchain.flow_placebo(daily, days, 2000, np.random.default_rng(0))
+    assert res["n"] == 3
+    assert res["placebo_mean"] == pytest.approx(7.0)
